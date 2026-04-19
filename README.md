@@ -12,6 +12,8 @@ Il expose deux fonctionnalités distinctes :
 
 - Java 17+
 - Maven 3.8+
+- Spring Boot 3.4.1
+- Spring Batch 5.x
 
 ---
 
