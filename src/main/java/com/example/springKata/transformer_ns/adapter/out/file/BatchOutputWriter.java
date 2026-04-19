@@ -1,5 +1,6 @@
 package com.example.springKata.transformer_ns.adapter.out.file;
 
+import com.example.springKata.transformer_ns.domain.model.TransformResult;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 @Component
 @Profile("batch")
-public class BatchOutputWriter implements ItemWriter<String> {
+public class BatchOutputWriter implements ItemWriter<TransformResult> {
 
     private final File outputFile;
 
@@ -31,10 +32,10 @@ public class BatchOutputWriter implements ItemWriter<String> {
     }
 
     @Override
-    public void write(Chunk<? extends String> items) throws Exception {
+    public void write(Chunk<? extends TransformResult> items) throws Exception {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile, true))) {
-            for (String item : items) {
-                writer.write(item);
+            for (TransformResult item : items) {
+                writer.write(item.getNumber() + " \"" + item.getResult() + "\"");
                 writer.newLine();
             }
         } catch (IOException e) {

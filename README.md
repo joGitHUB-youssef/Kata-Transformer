@@ -113,11 +113,11 @@ java -jar target/transformer-ns-0.0.1-SNAPSHOT.jar \
 
 #### Résultat attendu dans `output.txt` :
 ```
-BAR
-FOOFOOFOO
-FOOBARBAR
-QUIX
-4
+10 "BAR"
+33 "FOOFOOFOO"
+15 "FOOBARBAR"
+7 "QUIX"
+4 "4"
 ```
 > Les lignes invalides (`abc`, `150`) sont skippées. Un rapport s'affiche dans les logs avec le nombre de lignes traitées et ignorées.
 

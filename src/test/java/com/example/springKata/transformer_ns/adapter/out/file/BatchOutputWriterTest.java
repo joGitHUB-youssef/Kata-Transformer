@@ -1,5 +1,6 @@
 package com.example.springKata.transformer_ns.adapter.out.file;
 
+import com.example.springKata.transformer_ns.domain.model.TransformResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,30 +33,33 @@ class BatchOutputWriterTest {
     }
 
     @Test
-    @DisplayName("Le writer doit écrire les résultats ligne par ligne dans le fichier")
-    void shouldWriteItemsToFile() throws Exception {
-        writer.write(Chunk.of("FOO", "BAR", "4"));
+    @DisplayName("Le writer doit écrire chaque résultat au format : number \"result\"")
+    void shouldWriteItemsWithExpectedFormat() throws Exception {
+        writer.write(Chunk.of(
+                new TransformResult(10, "BAR"),
+                new TransformResult(33, "FOOFOOFOO"),
+                new TransformResult(4, "4")
+        ));
 
         List<String> lines = Files.readAllLines(tempFile.toPath());
 
         assertThat(lines).hasSize(3);
-        assertThat(lines.get(0)).isEqualTo("FOO");
-        assertThat(lines.get(1)).isEqualTo("BAR");
-        assertThat(lines.get(2)).isEqualTo("4");
+        assertThat(lines.get(0)).isEqualTo("10 \"BAR\"");
+        assertThat(lines.get(1)).isEqualTo("33 \"FOOFOOFOO\"");
+        assertThat(lines.get(2)).isEqualTo("4 \"4\"");
     }
 
     @Test
     @DisplayName("Le writer doit écrire en append sur plusieurs chunks")
     void shouldAppendOnMultipleChunks() throws Exception {
-        writer.write(Chunk.of("FOO", "BAR"));
-        writer.write(Chunk.of("FOOFOOFOO"));
+        writer.write(Chunk.of(new TransformResult(15, "FOOBARBAR")));
+        writer.write(Chunk.of(new TransformResult(7, "QUIX")));
 
         List<String> lines = Files.readAllLines(tempFile.toPath());
 
-        assertThat(lines).hasSize(3);
-        assertThat(lines.get(0)).isEqualTo("FOO");
-        assertThat(lines.get(1)).isEqualTo("BAR");
-        assertThat(lines.get(2)).isEqualTo("FOOFOOFOO");
+        assertThat(lines).hasSize(2);
+        assertThat(lines.get(0)).isEqualTo("15 \"FOOBARBAR\"");
+        assertThat(lines.get(1)).isEqualTo("7 \"QUIX\"");
     }
 
     @Test

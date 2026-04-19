@@ -1,5 +1,6 @@
 package com.example.springKata.transformer_ns.adapter.in.batch;
 
+import com.example.springKata.transformer_ns.domain.model.TransformResult;
 import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.context.annotation.Profile;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("batch")
-public class TransformerItemProcessor implements ItemProcessor<Integer, String> {
+public class TransformerItemProcessor implements ItemProcessor<Integer, TransformResult> {
 
     private final TransformerService transformerService;
 
@@ -16,7 +17,7 @@ public class TransformerItemProcessor implements ItemProcessor<Integer, String> 
     }
 
     @Override
-    public String process(Integer number) {
-        return transformerService.transform(number);
+    public TransformResult process(Integer number) {
+        return new TransformResult(number, transformerService.transform(number));
     }
 }

@@ -2,6 +2,7 @@ package com.example.springKata.transformer_ns.adapter.in.batch;
 
 import com.example.springKata.transformer_ns.adapter.out.file.BatchInputReader;
 import com.example.springKata.transformer_ns.adapter.out.file.BatchOutputWriter;
+import com.example.springKata.transformer_ns.domain.model.TransformResult;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -50,7 +51,7 @@ public class BatchJobConfig {
     @Bean
     public Step transformationStep() {
         return new StepBuilder("transformationStep", jobRepository)
-                .<Integer, String>chunk(2, transactionManager)
+                .<Integer, TransformResult>chunk(2, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

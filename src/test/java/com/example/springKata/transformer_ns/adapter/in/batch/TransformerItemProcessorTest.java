@@ -1,5 +1,6 @@
 package com.example.springKata.transformer_ns.adapter.in.batch;
 
+import com.example.springKata.transformer_ns.domain.model.TransformResult;
 import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,24 +21,30 @@ class TransformerItemProcessorTest {
     }
 
     @Test
-    @DisplayName("Le processor doit déléguer la transformation au service")
-    void shouldDelegateToTransformerService() throws Exception {
+    @DisplayName("Le processor doit retourner un TransformResult avec le nombre et son résultat")
+    void shouldReturnTransformResultWithNumberAndResult() throws Exception {
         when(transformerService.transform(15)).thenReturn("FOOBARBAR");
 
-        String result = processor.process(15);
+        TransformResult result = processor.process(15);
 
-        assertThat(result).isEqualTo("FOOBARBAR");
+        assertThat(result.getNumber()).isEqualTo(15);
+        assertThat(result.getResult()).isEqualTo("FOOBARBAR");
         verify(transformerService, times(1)).transform(15);
     }
 
     @Test
-    @DisplayName("Le processor doit retourner le résultat du service pour chaque nombre")
-    void shouldReturnServiceResultForEachNumber() throws Exception {
+    @DisplayName("Le processor doit déléguer la transformation au service pour chaque nombre")
+    void shouldDelegateToTransformerServiceForEachNumber() throws Exception {
         when(transformerService.transform(4)).thenReturn("4");
         when(transformerService.transform(33)).thenReturn("FOOFOOFOO");
 
-        assertThat(processor.process(4)).isEqualTo("4");
-        assertThat(processor.process(33)).isEqualTo("FOOFOOFOO");
+        TransformResult result1 = processor.process(4);
+        TransformResult result2 = processor.process(33);
+
+        assertThat(result1.getNumber()).isEqualTo(4);
+        assertThat(result1.getResult()).isEqualTo("4");
+        assertThat(result2.getNumber()).isEqualTo(33);
+        assertThat(result2.getResult()).isEqualTo("FOOFOOFOO");
 
         verify(transformerService, times(1)).transform(4);
         verify(transformerService, times(1)).transform(33);
