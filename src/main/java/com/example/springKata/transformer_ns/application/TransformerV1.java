@@ -1,0 +1,28 @@
+package com.example.springKata.transformer_ns.application;
+
+import com.example.springKata.transformer_ns.domain.TransformerConstants;
+import com.example.springKata.transformer_ns.domain.exception.InvalidNumberException;
+import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
+
+public class TransformerV1 implements TransformerService {
+
+    @Override
+    public String transform(int number) {
+        if (number < 0 || number > 100) {
+            throw new InvalidNumberException(number);
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        if (number % 3 == 0) result.append(TransformerConstants.FOO);
+        if (number % 5 == 0) result.append(TransformerConstants.BAR);
+
+        for (char digit : String.valueOf(number).toCharArray()) {
+            if (digit == '3')      result.append(TransformerConstants.FOO);
+            else if (digit == '5') result.append(TransformerConstants.BAR);
+            else if (digit == '7') result.append(TransformerConstants.QUIX);
+        }
+
+        return result.isEmpty() ? String.valueOf(number) : result.toString();
+    }
+}
