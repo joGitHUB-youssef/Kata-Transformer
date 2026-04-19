@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Batch files ###
+input.txt
+output.txt

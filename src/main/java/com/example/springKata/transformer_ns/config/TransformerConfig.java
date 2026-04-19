@@ -1,5 +1,6 @@
 package com.example.springKata.transformer_ns.config;
 
+import com.example.springKata.transformer_ns.application.TransformerOptimized;
 import com.example.springKata.transformer_ns.application.TransformerV1;
 import com.example.springKata.transformer_ns.application.TransformerV2;
 import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
@@ -16,8 +17,9 @@ public class TransformerConfig {
     @Bean
     public TransformerService transformerService() {
         return switch (version) {
-            case "v2" -> new TransformerV2();
-            default   -> new TransformerV1();
+            case "v2"         -> new TransformerV2();
+            case "optimized"  -> new TransformerOptimized();
+            default           -> new TransformerV1();
         };
     }
 }
