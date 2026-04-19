@@ -12,63 +12,63 @@ class TransformerV2Test {
     private final TransformerV2 transformer = new TransformerV2();
 
     @Test
-    @DisplayName("Un nombre sans règle doit retourner le nombre en string")
-    void shouldReturnNumberAsStringWhenNoRuleMatches() {
-        assertThat(transformer.transform(4)).isEqualTo("4");
+    @DisplayName("Un nombre sans règle doit retourner la ligne formatée pour le fichier output")
+    void shouldReturnFormattedLineWhenNoRuleMatches() {
+        assertThat(transformer.transform(4)).isEqualTo("4 \"4\"");
     }
 
     @Test
-    @DisplayName("Un nombre divisible par 3 doit retourner FOO")
-    void shouldReturnFooWhenDivisibleByThree() {
-        assertThat(transformer.transform(6)).isEqualTo("FOO");
+    @DisplayName("Un nombre divisible par 3 doit retourner la ligne formatée avec FOO")
+    void shouldReturnFormattedLineWithFooWhenDivisibleByThree() {
+        assertThat(transformer.transform(6)).isEqualTo("6 \"FOO\"");
     }
 
     @Test
-    @DisplayName("Un nombre divisible par 5 doit retourner BAR")
-    void shouldReturnBarWhenDivisibleByFive() {
-        assertThat(transformer.transform(10)).isEqualTo("BAR");
+    @DisplayName("Un nombre divisible par 5 doit retourner la ligne formatée avec BAR")
+    void shouldReturnFormattedLineWithBarWhenDivisibleByFive() {
+        assertThat(transformer.transform(10)).isEqualTo("10 \"BAR\"");
     }
 
     @Test
-    @DisplayName("Un nombre divisible par 3 et 5 doit retourner FOOBAR")
-    void shouldReturnFooBarWhenDivisibleByThreeAndFive() {
-        assertThat(transformer.transform(30)).isEqualTo("FOOBARFOO");
+    @DisplayName("Un nombre divisible par 3 et 5 doit retourner la ligne formatée avec FOOBARFOO")
+    void shouldReturnFormattedLineWithFooBarFooWhenDivisibleByThreeAndFive() {
+        assertThat(transformer.transform(30)).isEqualTo("30 \"FOOBARFOO\"");
     }
 
     @Test
-    @DisplayName("Un nombre contenant 3 doit retourner FOO")
-    void shouldReturnFooWhenContainsThree() {
-        assertThat(transformer.transform(13)).isEqualTo("FOO");
+    @DisplayName("Un nombre contenant 3 doit retourner la ligne formatée avec FOO")
+    void shouldReturnFormattedLineWithFooWhenContainsThree() {
+        assertThat(transformer.transform(13)).isEqualTo("13 \"FOO\"");
     }
 
     @Test
-    @DisplayName("Un nombre contenant 5 doit retourner BAR")
-    void shouldReturnBarWhenContainsFive() {
-        assertThat(transformer.transform(52)).isEqualTo("BAR");
+    @DisplayName("Un nombre contenant 5 doit retourner la ligne formatée avec BAR")
+    void shouldReturnFormattedLineWithBarWhenContainsFive() {
+        assertThat(transformer.transform(52)).isEqualTo("52 \"BAR\"");
     }
 
     @Test
-    @DisplayName("Un nombre contenant 7 doit retourner QUIX")
-    void shouldReturnQuixWhenContainsSeven() {
-        assertThat(transformer.transform(17)).isEqualTo("QUIX");
+    @DisplayName("Un nombre contenant 7 doit retourner la ligne formatée avec QUIX")
+    void shouldReturnFormattedLineWithQuixWhenContainsSeven() {
+        assertThat(transformer.transform(17)).isEqualTo("17 \"QUIX\"");
     }
 
     @Test
-    @DisplayName("33 : divisible par 3 + deux chiffres 3 doit retourner FOOFOOFOO")
-    void shouldReturnFooFooFooFor33() {
-        assertThat(transformer.transform(33)).isEqualTo("FOOFOOFOO");
+    @DisplayName("33 : divisible par 3 + deux chiffres 3 doit retourner la ligne formatée FOOFOOFOO")
+    void shouldReturnFormattedLineFor33() {
+        assertThat(transformer.transform(33)).isEqualTo("33 \"FOOFOOFOO\"");
     }
 
     @Test
-    @DisplayName("15 : divisible par 3 et 5 + chiffre 5 doit retourner FOOBARBAR")
-    void shouldReturnFooBarBarFor15() {
-        assertThat(transformer.transform(15)).isEqualTo("FOOBARBAR");
+    @DisplayName("15 : divisible par 3 et 5 + chiffre 5 doit retourner la ligne formatée FOOBARBAR")
+    void shouldReturnFormattedLineFor15() {
+        assertThat(transformer.transform(15)).isEqualTo("15 \"FOOBARBAR\"");
     }
 
     @Test
-    @DisplayName("37 : contient 3 et 7 doit retourner FOOQUIX")
-    void shouldReturnFooQuixFor37() {
-        assertThat(transformer.transform(37)).isEqualTo("FOOQUIX");
+    @DisplayName("37 : contient 3 et 7 doit retourner la ligne formatée FOOQUIX")
+    void shouldReturnFormattedLineFor37() {
+        assertThat(transformer.transform(37)).isEqualTo("37 \"FOOQUIX\"");
     }
 
     @Test

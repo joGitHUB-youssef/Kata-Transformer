@@ -35,7 +35,7 @@ public class BatchOutputWriter implements ItemWriter<TransformResult> {
     public void write(Chunk<? extends TransformResult> items) throws Exception {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile, true))) {
             for (TransformResult item : items) {
-                writer.write(item.getNumber() + " \"" + item.getResult() + "\"");
+                writer.write(item.getResult());
                 writer.newLine();
             }
         } catch (IOException e) {

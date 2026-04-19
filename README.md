@@ -68,22 +68,16 @@ java -jar target/transformer-ns-0.0.1-SNAPSHOT.jar
 #### Exemple d'appel :
 ```bash
 GET /transform/33
-→ "FOOFOOFOO"
+→ 200 : "FOOFOOFOO"
 
 GET /transform/150
-→ 400 Bad Request : "Number must be between 0 and 100, got: 150"
-```
+→ 400 : { "message": "Number must be between 0 and 100, got: 150", "status": 400 }
 
-#### Choisir l'implémentation (V1 impératif / V2 déclaratif) :
+GET /transform/abc
+→ 400 : { "message": "Le paramètre doit être un entier valide, reçu : abc", "status": 400 }
 
-Dans `application.properties` :
-```properties
-transformer.version=v1   # ou v2
-```
-
-Ou à l'exécution :
-```bash
-java -jar target/transformer-ns-0.0.1-SNAPSHOT.jar -Dtransformer.version=v2
+GET /transform
+→ 400 : { "message": "Le paramètre number est obligatoire. Usage : /transform/{number}", "status": 400 }
 ```
 
 ---
@@ -141,14 +135,23 @@ batch.output-file=file:output.txt
 ./mvnw test -Dtest="TransformerV1Test"
 ```
 
-| Classe de test | Description |
+### Tests unitaires
+
+| Classe | Description |
 |---|---|
-| `TransformerV1Test` | Tests unitaires de l'implémentation impérative |
-| `TransformerV2Test` | Tests unitaires de l'implémentation déclarative |
-| `TransformerControllerTest` | Tests du controller REST avec MockMvc |
-| `TransformerItemProcessorTest` | Tests du processor batch avec mock |
-| `BatchInputReaderTest` | Tests du reader batch |
-| `BatchOutputWriterTest` | Tests du writer batch |
+| `TransformerV1Test` | Implémentation impérative — retourne la chaîne transformée |
+| `TransformerV2Test` | Implémentation batch — retourne la ligne formatée pour output.txt |
+| `TransformerOptimizedTest` | Implémentation avec pré-calcul + vérifie les 101 valeurs |
+| `TransformerControllerTest` | Controller REST avec `@MockitoBean` + MockMvc |
+| `TransformerItemProcessorTest` | Processor batch : délègue à `TransformerV2` via `@Qualifier` |
+| `BatchInputReaderTest` | Reader batch (fichier valide, vide, invalide, hors plage) |
+| `BatchOutputWriterTest` | Writer batch : écrit directement la ligne formatée produite par V2 |
+
+### Tests d'intégration
+
+| Classe | Description |
+|---|---|
+| `BatchIntegrationTest` | Lance le vrai job Spring Batch sur un fichier temporaire, vérifie le statut `COMPLETED`, le contenu de `output.txt` et le nombre de lignes skippées |
 
 ---
 
@@ -156,25 +159,36 @@ batch.output-file=file:output.txt
 
 ```
 src/main/java/.../
-├── domain/                          ← métier pur, 0 Spring
-│   ├── model/TransformResult.java
-│   ├── port/in/TransformerService.java
-│   ├── TransformerConstants.java
+├── domain/                              ← métier pur, 0 Spring
+│   ├── model/TransformResult.java       ← encapsule number + result (utilisé par le batch)
+│   ├── port/in/TransformerService.java  ← interface transform(int) : String
+│   ├── TransformerConstants.java        ← FOO, BAR, QUIX
 │   └── exception/InvalidNumberException.java
-├── application/                     ← implémentations métier, 0 Spring
-│   ├── TransformerV1.java           ← impératif (if/else)
-│   └── TransformerV2.java           ← déclaratif (Stream)
+├── application/                         ← implémentations, toutes @Component
+│   ├── TransformerV1.java               ← impératif (if/else + for) — @Component
+│   ├── TransformerV2.java               ← batch output file (Stream + Record) — @Component @Qualifier("batchTransformer")
+│   └── TransformerOptimized.java        ← pré-calcul des 101 valeurs — @Component @Primary (REST)
 ├── adapter/
 │   ├── in/
-│   │   ├── web/TransformerController.java
+│   │   ├── web/
+│   │   │   ├── TransformerController.java      ← GET /transform/{number} — injecte @Primary (TransformerOptimized)
+│   │   │   ├── GlobalExceptionHandler.java     ← @RestControllerAdvice, gestion centralisée des erreurs
+│   │   │   └── ErrorResponse.java              ← réponse JSON pour les erreurs
 │   │   └── batch/
-│   │       ├── BatchJobConfig.java
-│   │       ├── TransformerBatchRunner.java
-│   │       ├── TransformerItemProcessor.java
-│   │       ├── TransformerSkipPolicy.java
-│   │       └── TransformerStepListener.java
+│   │       ├── BatchJobConfig.java          ← configuration Job + Step Spring Batch
+│   │       ├── TransformerBatchRunner.java  ← CommandLineRunner, lance le job
+│   │       ├── TransformerItemProcessor.java← Integer → TransformResult — injecte @Qualifier("batchTransformer") (TransformerV2)
+│   │       ├── TransformerSkipPolicy.java   ← lignes invalides skippées sans arrêt
+│   │       └── TransformerStepListener.java ← rapport en fin de job
 │   └── out/file/
-│       ├── BatchInputReader.java
-│       └── BatchOutputWriter.java
-└── config/TransformerConfig.java    ← choix V1 / V2
+│       ├── BatchInputReader.java            ← lit input.txt ligne par ligne
+│       └── BatchOutputWriter.java          ← écrit directement la ligne formatée produite par TransformerV2
 ```
+
+### Sélection des implémentations
+
+| Bean | Annotation | Utilisé par |
+|---|---|---|
+| `TransformerOptimized` | `@Primary` | `TransformerController` (REST) |
+| `TransformerV2` | `@Qualifier("batchTransformer")` | `TransformerItemProcessor` (Batch) |
+| `TransformerV1` | `@Component` | délégué interne de `TransformerOptimized` |

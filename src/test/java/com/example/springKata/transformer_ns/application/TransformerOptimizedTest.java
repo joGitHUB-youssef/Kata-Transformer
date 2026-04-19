@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TransformerOptimizedTest {
 
-    private final TransformerOptimized transformer = new TransformerOptimized();
+    private final TransformerOptimized transformer = new TransformerOptimized(new TransformerV1());
 
     @Test
     @DisplayName("Un nombre sans règle doit retourner le nombre en string")

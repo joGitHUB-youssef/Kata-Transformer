@@ -33,12 +33,12 @@ class BatchOutputWriterTest {
     }
 
     @Test
-    @DisplayName("Le writer doit écrire chaque résultat au format : number \"result\"")
-    void shouldWriteItemsWithExpectedFormat() throws Exception {
+    @DisplayName("Le writer doit écrire directement la ligne formatée produite par TransformerV2")
+    void shouldWriteFormattedLineDirectly() throws Exception {
         writer.write(Chunk.of(
-                new TransformResult(10, "BAR"),
-                new TransformResult(33, "FOOFOOFOO"),
-                new TransformResult(4, "4")
+                new TransformResult(10, "10 \"BAR\""),
+                new TransformResult(33, "33 \"FOOFOOFOO\""),
+                new TransformResult(4, "4 \"4\"")
         ));
 
         List<String> lines = Files.readAllLines(tempFile.toPath());
@@ -52,8 +52,8 @@ class BatchOutputWriterTest {
     @Test
     @DisplayName("Le writer doit écrire en append sur plusieurs chunks")
     void shouldAppendOnMultipleChunks() throws Exception {
-        writer.write(Chunk.of(new TransformResult(15, "FOOBARBAR")));
-        writer.write(Chunk.of(new TransformResult(7, "QUIX")));
+        writer.write(Chunk.of(new TransformResult(15, "15 \"FOOBARBAR\"")));
+        writer.write(Chunk.of(new TransformResult(7, "7 \"QUIX\"")));
 
         List<String> lines = Files.readAllLines(tempFile.toPath());
 

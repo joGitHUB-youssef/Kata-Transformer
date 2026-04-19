@@ -6,13 +6,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TransformerController.class)
@@ -21,7 +22,7 @@ class TransformerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private TransformerService transformerService;
 
     @Test
@@ -54,7 +55,8 @@ class TransformerControllerTest {
         mockMvc.perform(get("/transform/-1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Number must be between 0 and 100, got: -1"));
+                .andExpect(jsonPath("$.message").value("Number must be between 0 and 100, got: -1"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -65,6 +67,7 @@ class TransformerControllerTest {
         mockMvc.perform(get("/transform/101")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Number must be between 0 and 100, got: 101"));
+                .andExpect(jsonPath("$.message").value("Number must be between 0 and 100, got: 101"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 }

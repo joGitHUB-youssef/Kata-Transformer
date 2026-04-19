@@ -3,11 +3,13 @@ package com.example.springKata.transformer_ns.application;
 import com.example.springKata.transformer_ns.domain.TransformerConstants;
 import com.example.springKata.transformer_ns.domain.exception.InvalidNumberException;
 import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.IntUnaryOperator;
-import java.util.stream.IntStream;
 
+@Component
+@Qualifier("batchTransformer")
 public class TransformerV2 implements TransformerService {
 
     private record DigitRule(char digit, String token) {}
@@ -18,6 +20,11 @@ public class TransformerV2 implements TransformerService {
         new DigitRule('7', TransformerConstants.QUIX)
     );
 
+    /**
+     * alternate implementation for output file
+     * @param number number to transform
+     * @return String transformed number
+     */
     @Override
     public String transform(int number) {
         if (number < 0 || number > 100) {
@@ -36,6 +43,7 @@ public class TransformerV2 implements TransformerService {
             .reduce("", String::concat);
 
         String result = divisible + fromDigits;
-        return result.isEmpty() ? String.valueOf(number) : result;
+        String transformed = result.isEmpty() ? String.valueOf(number) : result;
+        return number + " \"" + transformed + "\"";
     }
 }
