@@ -9,6 +9,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Implémentation optimisée avec pré-calcul de toutes les valeurs possibles (0 à 100) au démarrage.
+ * Délègue le calcul initial à TransformerV1, puis stocke les résultats en cache pour une réponse en O(1).
+ * C'est l'implémentation par défaut injectée dans le controller REST (@Primary).
+ */
 @Component
 @Primary
 public class TransformerOptimized implements TransformerService {

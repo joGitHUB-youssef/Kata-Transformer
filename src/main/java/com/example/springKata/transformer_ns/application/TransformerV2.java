@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Implémentation déclarative de la transformation de nombres (Stream + Record).
+ * Contrairement à V1 et Optimized, cette version formate directement le résultat
+ * sous forme de ligne prête à être écrite dans le fichier output.txt : number "result".
+ * Utilisée exclusivement par le job Spring Batch via @Qualifier("batchTransformer").
+ */
 @Component
 @Qualifier("batchTransformer")
 public class TransformerV2 implements TransformerService {

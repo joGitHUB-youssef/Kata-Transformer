@@ -5,6 +5,11 @@ import com.example.springKata.transformer_ns.domain.exception.InvalidNumberExcep
 import com.example.springKata.transformer_ns.domain.port.in.TransformerService;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implémentation impérative de la transformation de nombres.
+ * Applique les règles métier via des conditions if/else et une boucle sur les chiffres.
+ * Utilisée comme délégué interne par TransformerOptimized pour construire son cache au démarrage.
+ */
 @Component
 public class TransformerV1 implements TransformerService {
 
