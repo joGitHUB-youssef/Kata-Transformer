@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### macOS ###
+.DS_Store
+
 ### Batch files ###
 input.txt
 output.txt
